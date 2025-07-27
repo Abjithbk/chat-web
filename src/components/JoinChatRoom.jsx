@@ -5,11 +5,13 @@ const JoinChatRoom = () => {
    const[roomName,setRoomName] = useState("");
 
    const navigate = useNavigate();
+
     const handleJoinRoom = () => {
         if(roomName.trim()!== "") {
             navigate(`/chat/${roomName}`);
         }
-    }
+    };
+    
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-600 via-indigo-500 to-blue-500 flex items-center justify-center p-4">
       <div className="bg-white p-6 rounded-xl shadow-xl w-full max-w-md">
@@ -27,6 +29,9 @@ const JoinChatRoom = () => {
         onClick={() => {
             handleJoinRoom();
         }}
+        onKeyDown={(e => {
+          e.key === "Enter" && handleJoinRoom();
+        })}
           className="mt-4 w-full py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700"
         >
           Join Room

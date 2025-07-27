@@ -1,6 +1,7 @@
 import axios from 'axios';
 import React, { useState } from 'react'
 import {useNavigate} from 'react-router-dom'
+const apiUrl = process.env.REACT_APP_API_URL;
 const Signup = () => {
     const [name,setName] = useState("");
     const [email,setEmail] = useState("");
@@ -8,14 +9,19 @@ const Signup = () => {
     const [lastName,setLastName] = useState("")
     const [password,setPassword] = useState("")
     const [confPassword,setConfPassword] = useState("")
+    const [loading,setLoading] = useState(false)
     const navigate = useNavigate()
     const handleSubmit = async (e) => {
         e.preventDefault();
-
+        setLoading(true)  
         try {
-          const response = await axios.post("https://chatroom-rwgp.onrender.com/api/create/profile/",{
+          const response = await axios.post(`${apiUrl}/api/create/profile/`,{
             username:name,email:email,first_name:firstName,last_name:lastName,password:password,confirm_password:confPassword
-          });
+          },{
+          headers: {
+            "Content-Type": "application/json",
+          }}
+        );
           navigate("/Login");
           console.log(response.data);
           
@@ -24,7 +30,10 @@ const Signup = () => {
       console.error(error);
       
         }
-    }
+        finally {
+          setLoading(false)
+        }
+    };
     
   return (
     <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
@@ -36,12 +45,12 @@ const Signup = () => {
 
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
           <form onSubmit={handleSubmit} className="space-y-6">
-            {/* {loading && (
+            {loading && (
             <div className="flex items-center justify-center gap-2 text-indigo-600 font-medium">
               <div className="w-4 h-4 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
               <span>Creating account...</span>
             </div>
-          )} */}
+          )}
             <div>
               <label htmlFor="username" className="block text-sm/6 font-medium text-gray-900">
                 Username
@@ -160,9 +169,12 @@ const Signup = () => {
             <div>
               <button
                 type="submit"
-                 className="flex w-full justify-center rounded-md px-3 py-1.5 text-sm font-semibold text-black shadow-sm "
+                disabled={loading}
+                 className={`flex w-full justify-center rounded-md px-3 py-1.5 text-sm font-semibold text-white shadow-sm${
+                  loading ? " bg-indigo-200 cursor-not-allowed" : " bg-indigo-600 hover:bg-indigo-500"
+                 } `}
               >
-               Signup
+               {loading ? "Creating..." : "Sign Up"}
               </button>
             </div>
           </form>
